@@ -1,0 +1,416 @@
+
+-- tables
+-- Table: Galaktyka
+CREATE TABLE Galaktyka (
+    id integer  NOT NULL,
+    nazwa varchar2(21)  NOT NULL,
+    CONSTRAINT Galaktyka_pk PRIMARY KEY (id)
+) ;
+
+-- Table: Historia_dowodzenia
+CREATE TABLE Historia_dowodzenia (
+    Klon_Legion_id integer  NOT NULL,
+    Jedi_imie varchar2(50)  NOT NULL,
+    data_rozpoczecia date  NOT NULL,
+    data_zakonczenia date  NULL,
+    CONSTRAINT Historia_dowodzenia_pk PRIMARY KEY (Klon_Legion_id,Jedi_imie,data_rozpoczecia)
+) ;
+
+-- Table: Jedi
+CREATE TABLE Jedi (
+    imie varchar2(50)  DEFAULT null NOT NULL,
+    nazwisko varchar2(21)  NULL,
+    ranga varchar2(21)  NOT NULL,
+    rada char(1)  NULL,
+    CONSTRAINT Jedi_pk PRIMARY KEY (imie)
+) ;
+
+-- Table: Jedi_Misja
+CREATE TABLE Jedi_Misja (
+    Misja_id integer  NOT NULL,
+    Jedi_imie varchar2(50)  NOT NULL,
+    CONSTRAINT Jedi_Mission_pk PRIMARY KEY (Misja_id,Jedi_imie)
+) ;
+
+-- Table: Klon
+CREATE TABLE Klon (
+    id integer  NOT NULL,
+    pseudonim varchar2(21)  NULL,
+    czy_wybitny char(1)  NULL,
+    stopien_wojskowy varchar2(21)  NOT NULL,
+    Klon_Legion_id integer  NOT NULL,
+    CONSTRAINT Klon_pk PRIMARY KEY (id)
+) ;
+
+-- Table: Klon_Legion
+CREATE TABLE Klon_Legion (
+    id integer  DEFAULT null NOT NULL,
+    nazwa varchar2(50)  DEFAULT null NULL,
+    rodzaj varchar2(21)  NOT NULL,
+    CONSTRAINT Clone_Legion_pk PRIMARY KEY (id)
+) ;
+drop table Legion_Misja;
+-- Table: Legion_Misja
+CREATE TABLE Legion_Misja (
+    Klon_Legion_id integer  NOT NULL,
+    Straty_legionu integer  NOT NULL,
+    Misja_id integer  NOT NULL,
+    CONSTRAINT Legion_Mission_pk PRIMARY KEY (Klon_Legion_id,Misja_id)
+) ;
+
+-- Table: Lista_Padawanow
+CREATE TABLE Lista_Padawanow (
+    Mistrz varchar2(50)  NOT NULL,
+    Padawan varchar2(50)  NOT NULL,
+    padawan_od date  NOT NULL,
+    padawan_do date  NOT NULL,
+    CONSTRAINT Lista_Padawanow_pk PRIMARY KEY (Mistrz,Padawan)
+) ;
+
+-- Table: Misja
+CREATE TABLE Misja (
+    id integer  NOT NULL,
+    kryptonim varchar2(50)  NOT NULL,
+    planeta_id integer  NOT NULL,
+    data_rozpoczecia date  NOT NULL,
+    data_zakonczenia date  NULL,
+    czy_zwyciestwo char(1)  NULL,
+    CONSTRAINT Misja_pk PRIMARY KEY (id)
+) ;
+
+-- Table: Planeta
+CREATE TABLE Planeta (
+    id integer  NOT NULL,
+    nazwa varchar2(50)  NOT NULL,
+    populacja integer  NOT NULL,
+    Galaktyka_id integer  NOT NULL,
+    CONSTRAINT Planeta_pk PRIMARY KEY (id)
+) ;
+
+-- foreign keys
+-- Reference: Historia_dowodzenia_Jedi (table: Historia_dowodzenia)
+ALTER TABLE Historia_dowodzenia ADD CONSTRAINT Historia_dowodzenia_Jedi
+    FOREIGN KEY (Jedi_imie)
+    REFERENCES Jedi (imie);
+
+-- Reference: Historia_dowodzenia_klon (table: Historia_dowodzenia)
+ALTER TABLE Historia_dowodzenia ADD CONSTRAINT Historia_dowodzenia_klon
+    FOREIGN KEY (Klon_Legion_id)
+    REFERENCES Klon_Legion (id);
+
+-- Reference: Jedi_Misja_Jedi (table: Jedi_Misja)
+ALTER TABLE Jedi_Misja ADD CONSTRAINT Jedi_Misja_Jedi
+    FOREIGN KEY (Jedi_imie)
+    REFERENCES Jedi (imie);
+
+-- Reference: Jedi_Misja_Misja (table: Jedi_Misja)
+ALTER TABLE Jedi_Misja ADD CONSTRAINT Jedi_Misja_Misja
+    FOREIGN KEY (Misja_id)
+    REFERENCES Misja (id);
+
+-- Reference: Klon_Klon_Legion (table: Klon)
+ALTER TABLE Klon ADD CONSTRAINT Klon_Klon_Legion
+    FOREIGN KEY (Klon_Legion_id)
+    REFERENCES Klon_Legion (id);
+
+-- Reference: Legion_Misja_Klon_Legion (table: Legion_Misja)
+ALTER TABLE Legion_Misja ADD CONSTRAINT Legion_Misja_Klon_Legion
+    FOREIGN KEY (Klon_Legion_id)
+    REFERENCES Klon_Legion (id);
+
+-- Reference: Legion_Misja_Misja (table: Legion_Misja)
+ALTER TABLE Legion_Misja ADD CONSTRAINT Legion_Misja_Misja
+    FOREIGN KEY (Misja_id)
+    REFERENCES Misja (id);
+
+-- Reference: Lista_Padawanow_Jedi (table: Lista_Padawanow)
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
+ALTER TABLE Lista_Padawanow ADD CONSTRAINT Lista_Padawanow_Jedi
+    FOREIGN KEY (Padawan)
+    REFERENCES Jedi (imie);
+
+-- Reference: Lista_Padawanow_Jedi1 (table: Lista_Padawanow)
+ALTER TABLE Lista_Padawanow ADD CONSTRAINT Lista_Padawanow_Jedi1
+    FOREIGN KEY (Mistrz)
+    REFERENCES Jedi (imie);
+
+-- Reference: Misja_Raport_Planeta (table: Misja)
+ALTER TABLE Misja ADD CONSTRAINT Misja_Raport_Planeta
+    FOREIGN KEY (planeta_id)
+    REFERENCES Planeta (id);
+
+-- Reference: Planeta_Galaktyka (table: Planeta)
+ALTER TABLE Planeta ADD CONSTRAINT Planeta_Galaktyka
+    FOREIGN KEY (Galaktyka_id)
+    REFERENCES Galaktyka (id);
+
+-- End of file.
+
+-- Jedi: Values
+
+INSERT ALL
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Yoda',null,'Wielki mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Mace','Windu','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Obi-Wan','Kenobi','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Anakin','Skywalker','Rycerz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Ki-Adi','Mundi','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Kit','Fisto','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Agen','Kolar','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Plo','Koon','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Shaak','Ti','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Seasee','Tiin','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Stass','Allie','Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Yaddle',null,'Mistrz jedi','T')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Grogu',null,'Mlodzik','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Cal','Kestis','Padawan','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Jaro','Tapal','Mistrz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Cere','Junda','Rycerz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Eeth','Koth','Rycerz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Quinlan','Vos','Rycerz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Luminara','Unduli','Mistrz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Baris','Offe','Padawan','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Adi','Galia','Rycerz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Ahsoka','Tano','Padawan','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Aayla','Secura','Rycerz jedi','N')
+    INTO JEDI (imie, nazwisko, ranga, rada) VALUES ('Reva','Sevander','Mlodzik','N')
+
+    SELECT 1 FROM dual;
+-- Lista Padawanow: Values
+INSERT ALL
+    INTO LISTA_PADAWANOW(mistrz, padawan, padawan_od, padawan_do) VALUES ('Jaro','Cal','01-06-2000','01-06-2014')
+    INTO LISTA_PADAWANOW(mistrz, padawan, padawan_od, padawan_do) VALUES ('Anakin','Ahsoka','01-06-1990','01-06-2012')
+    INTO LISTA_PADAWANOW(mistrz, padawan, padawan_od, padawan_do) VALUES ('Luminara','Baris','05-06-1990','01-08-2012')
+
+    SELECT 1 FROM dual;
+-- Legiony Klonow
+
+INSERT ALL
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (501,'Pięść Vadera','Szturmowy')
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (212,null,'Rozpoznawczy')
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (104,'Wolfpack','Szturmowy')
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (99,'Parszywa Zgraja','Rozpoznawczy')
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (41,'Czterdziestka Jedynka','Rozpoznawczy')
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (327,null,'Szturmowy')
+    INTO KLON_LEGION(ID,NAZWA,RODZAJ) VALUES (187,null,'Szturmowy')
+
+SELECT 1 FROM dual;
+
+-- Klony
+INSERT ALL
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (1,'Cody','T','Komandor',212)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (2,'Waxer','T','Porucznik',212)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (3,'Boil','T','Porucznik',212)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (4,null,'N','Zolnierz',212)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (5,null,'N','Zolnierz',212)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (6,null,'N','Zolnierz',212)
+
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (7,'Rex','T','Komandor',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (8,'Fives','T','ARC',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (9,'Jesse','T','Porucznik',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (10,'Tup','T','Zolnierz',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (11,'Dogma','N','Zolnierz',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (12,'Echo','T','ARC',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (13,'Kix','T','Medyk',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (14,'Hardcase','T','Zolnierz',501)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (15,'Appo','T','Porucznik',501)
+
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (16,'Wolf','T','Komandor',104)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (17,'Sinker','T','Kapitan',104)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (18,'Comet','T','Zolnierz',104)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (19,'Boost','T','Zolnierz',104)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (20,null,'N','Zolnierz',104)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (21,null,'N','Zolnierz',104)
+
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (22,'Hunter','T','Kapitan',99)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (24,'Tech','T','Kapitan',99)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (25,'Wrecker','T','Kapitan',99)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (26,'Crosshair','T','Kapitan',99)
+
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (27,'Gree','T','Komandor',41)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (28,'Jag','T','Kapitan',41)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (29,'Scythe','N','Zolnierz',41)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (30,null,'N','Zolnierz',41)
+
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (31,'Bly','T','Komandor',327)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (32,'Deviss','T','Komandor',327)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (33,'Tyto','T','Kapitan',327)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (34,null,'N','Zolnierz',327)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (35,null,'N','Zolnierz',327)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (36,null,'N','Zolnierz',327)
+
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (37,'Maxun','T','Komandor',187)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (38,'Cull','T','Kapitan',187)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (39,null,'N','Zolnierz',187)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (40,null,'N','Zolnierz',187)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (41,null,'N','Zolnierz',187)
+    INTO KLON(ID,PSEUDONIM,CZY_WYBITNY,STOPIEN_WOJSKOWY,KLON_LEGION_ID) VALUES (42,null,'N','Zolnierz',187)
+SELECT 1 FROM dual;
+--historia dowodzenia
+INSERT ALL
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (212,'Obi-Wan','13-05-1990',null)
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (99,'Yoda','13-05-1990',null)
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (187,'Mace','13-05-1983',null)
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (327,'Aayla','13-05-1987',null)
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (104,'Plo','13-05-1990',null)
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (501,'Anakin','13-05-1990','13-05-2000')
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (501,'Ahsoka','14-05-2000','15-05-2005')
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (501,'Anakin','15-05-2005',null)
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (41,'Yoda','14-05-1990','15-05-2005')
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (41,'Luminara','16-05-2005','15-05-2010')
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (41,'Baris','16-05-2010','15-05-2016')
+    INTO HISTORIA_DOWODZENIA(Klon_Legion_id, Jedi_imie, data_rozpoczecia, data_zakonczenia) VALUES (41,'Yoda','16-05-2015',null)
+
+SELECT 1 FROM dual;
+
+select * from HISTORIA_DOWODZENIA;
+
+
+--misja
+INSERT ALL
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (2, 'Cichy Kruk', 3, '20-02-1998', '25-02-1998', 'T')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (3, 'Błyskawiczna Tarcza', 4, '10-03-1999', '12-03-1999', 'N')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (4, 'Ognisty Anioł', 2, '05-05-2000', '08-05-2000', 'T')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (5, 'Mroczny Łowca', 1, '15-06-2001', '18-06-2001', 'T')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (6, 'Północna Błyskawica', 3, '02-09-2002', '06-09-2002', 'T')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (7, 'Płomień', 2, '12-11-2003','15-11-2003', 'N')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (8, 'Mroczne Widmo', 3, '20-06-2004', '25-06-2004', 'T')
+    INTO MISJA(ID, KRYPTONIM, PLANETA_ID, DATA_ROZPOCZECIA, DATA_ZAKONCZENIA, CZY_ZWYCIESTWO) VALUES (9, 'Ostatni dodatek kolekcji', 5, '20-06-2004', null, null)
+SELECT 1 FROM dual;
+
+--planeta
+INSERT ALL
+    INTO PLANETA(ID, NAZWA, POPULACJA, GALAKTYKA_ID) VALUES (1,'Geonosis',37000000,1)
+    INTO PLANETA(ID, NAZWA, POPULACJA, GALAKTYKA_ID) VALUES (2,'Mustafar',55000000,1)
+    INTO PLANETA(ID, NAZWA, POPULACJA, GALAKTYKA_ID) VALUES (3,'Felucia',66000000,1)
+    INTO PLANETA(ID, NAZWA, POPULACJA, GALAKTYKA_ID) VALUES (4,'Kamino',100000000,1)
+    INTO PLANETA(ID, NAZWA, POPULACJA, GALAKTYKA_ID) VALUES (5,'Utapau',22200000,2)
+SELECT 1 FROM dual;
+
+--galaktyka
+INSERT ALL
+    INTO GALAKTYKA(ID, NAZWA) VALUES (1,'Zewnetrzne Rubieze')
+    INTO GALAKTYKA(ID, NAZWA) VALUES (2,'Nieznane Teretoria')
+SELECT 1 FROM dual;
+--jedi misja
+INSERT ALL
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (9,'Obi-Wan')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (8,'Anakin')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (7,'Anakin')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (6,'Luminara')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (5,'Mace')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (4,'Aayla')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (3,'Obi-Wan')
+    INTO Jedi_Misja(MISJA_ID, JEDI_IMIE) VALUES (2,'Plo')
+SELECT 1 FROM dual;
+
+--legion misja
+INSERT ALL
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (212,1000,9)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (501,1423,8)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (501,3985,7)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (41,1768,6)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (187,1024,5)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (327,2000,4)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (212,4123,3)
+    INTO Legion_Misja(KLON_LEGION_ID, STRATY_LEGIONU, MISJA_ID) VALUES (104,300,2)
+SELECT 1 FROM dual;
+
+INSERT ALL
+    INTO LISTA_PADAWANOW(mistrz, padawan, padawan_od, padawan_do) VALUES ('Yoda','Mace','05-06-1950','05-06-1965')
+    INTO LISTA_PADAWANOW(mistrz, padawan, padawan_od, padawan_do) VALUES ('Yoda','Ki-Adi','05-06-1966','05-06-1976')
+SELECT 1 FROM dual;
+
+
+--To polecenie wybiera imię, nazwisko i rangę wszystkich Jedi, którzy mają rangę "Mistrz jedi".
+SELECT imie || ' '||  nazwisko as JEDI, ranga
+FROM Jedi
+WHERE ranga = 'Mistrz jedi';
+
+--To polecenie wybiera kryptonim, datę rozpoczęcia i datę zakończenia wszystkich misji, które jeszcze się nie zakończyły.
+SELECT kryptonim, data_rozpoczecia, data_zakonczenia
+FROM Misja
+WHERE data_zakonczenia IS NULL; 
+
+--To polecenie wybiera pseudonim, legion i stopień wojskowy wszystkich klonów, którzy są uznani za wybitnych (czy_wybitny = 'T') i mają stopień wojskowy "Komandor".
+SELECT pseudonim, stopien_wojskowy, Klon_Legion_id
+FROM Klon
+WHERE czy_wybitny = 'T' AND stopien_wojskowy = 'Komandor';
+
+--To polecenie wybiera nazwę i populację wszystkich planet, których populacja przekracza 1 000 000.
+SELECT nazwa, populacja
+FROM Planeta
+WHERE populacja > 1000000;
+
+--To polecenie wybiera imię Jedi, datę rozpoczęcia i datę zakończenia wszystkich przypadków historii dowodzenia, które mają ustawioną datę zakończenia.
+SELECT Jedi_imie, data_rozpoczecia, data_zakonczenia
+FROM Historia_dowodzenia
+WHERE data_zakonczenia IS NOT NULL;
+
+
+
+
+--Polecenie zwraca imie oraz liczbe misji w jakiej jedi bral udzial
+SELECT jedi.imie, COUNT(jmisja.Jedi_imie) as liczba_misji
+FROM Jedi jedi
+LEFT JOIN Jedi_Misja jmisja ON jedi.imie = jmisja.Jedi_imie
+GROUP BY jedi.imie;
+
+
+--Polecenie zlicza liczbe misje na kazdej planecie
+SELECT planeta.nazwa, COUNT(misja.id) as liczba_misji
+FROM Misja misja
+INNER JOIN Planeta planeta ON misja.planeta_id = planeta.id
+GROUP BY planeta.nazwa;
+
+--To polecenie pokazuje cala historie dowodzenia danym legionem klonow.
+SELECT j.imie, h.data_rozpoczecia, h.data_zakonczenia, h.Klon_Legion_id
+FROM Jedi j
+JOIN Historia_dowodzenia h ON j.imie = h.Jedi_imie
+join KLON K on h.Klon_Legion_id = K.KLON_LEGION_ID
+GROUP BY j.imie, h.data_rozpoczecia, h.data_zakonczenia, h.Klon_Legion_id;
+
+--To polecenie pokazuje planete na ktorej byla wykonywana misja o konkretnym kryptonimie, uwzgledniamy rowniez galaktyke
+SELECT p.nazwa AS nazwa_planety, g.nazwa AS nazwa_galaktyki, m.kryptonim
+FROM Planeta p
+JOIN Galaktyka g ON p.Galaktyka_id = g.id
+JOIN Misja m ON p.id = m.planeta_id;
+
+--To polecenie wypisuje nazwe oraz id (numer) legionu oraz jego straty w konkretnych misjach.
+SELECT kl.id AS Numer_Legionu,COALESCE(kl.nazwa,'brak') AS Nazwa_Legionu, lm.Straty_legionu, m.kryptonim
+FROM Klon_Legion kl
+JOIN Legion_Misja lm ON kl.id = lm.Klon_Legion_id
+JOIN Misja m ON lm.Misja_id = m.id;
+
+
+
+
+
+
+--To polecenie zlicza ile misji odbyl kazdy legion
+SELECT Klon_Legion_id, COUNT(*) AS Liczba_misji
+FROM Legion_Misja
+GROUP BY Klon_Legion_id;
+
+-- To polecenie znajduje legion z najwieksza liczba misji.
+SELECT Klon_Legion_id, COUNT(*) AS Liczba_misji
+FROM Legion_Misja
+GROUP BY Klon_Legion_id
+HAVING COUNT(*) = (SELECT MAX(COUNT(*)) FROM Legion_Misja GROUP BY Klon_Legion_id);
+
+--To polecenie sumuje populacje w galaktykach.
+SELECT Galaktyka_id, SUM(populacja) AS Suma_populacji
+FROM Planeta
+GROUP BY Galaktyka_id;
+
+--To polecenie zlicza padawanow danego mistrza.
+SELECT Mistrz, COUNT(Padawan) AS Liczba_Padawanow
+FROM Lista_Padawanow
+GROUP BY Mistrz;
+
+-- To polecenie znajduje mistrza z najwieksza liczba padawanow.
+SELECT Mistrz, COUNT(Padawan) AS Liczba_Padawanow
+FROM Lista_Padawanow
+GROUP BY Mistrz
+HAVING COUNT(Padawan) = (SELECT MAX(COUNT(Padawan)) FROM LISTA_PADAWANOW GROUP BY  Mistrz);
+
+
